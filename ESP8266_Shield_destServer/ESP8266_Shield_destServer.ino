@@ -45,11 +45,7 @@ ESP8266Server server = ESP8266Server(80);
 //////////////////
 // const String output = ("Press any key to begin. \t'{0}'", destServer)
 const char destServer[] = "bd4385fa.ngrok.io";
-//const String htmlHeader = "HTTP/1.1 200 OK\r\n"
-//                          "Content-Type: text/json\r\n"
-//                          "Connection: close\r\n\r\n"
-//                          "<!DOCTYPE HTML>\r\n"
-//                          "<html>\r\n";
+
 
 const String httpRequest = "GET / HTTP/1.1\r\n"
                            "Host:bd4385fa.ngrok.io\r\n"
