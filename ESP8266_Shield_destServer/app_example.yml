@@ -1,0 +1,6 @@
+runtime: ruby
+env: flex
+entrypoint: bundle exec ruby server/sinatra_server.rb
+env_variables:
+  cloud_app: "true"
+  open_weather_api_key: "123456"
