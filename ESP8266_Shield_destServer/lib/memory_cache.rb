@@ -9,10 +9,7 @@ class MemoryCache
 			return res[:value] if (res[:timestamp] + res[:expires_in]) >= Time.now 
 		end
 		if block
-			@@memory[key] = {
-				value: block.yield,
-				timestamp: Time.now,
-			  expires_in: expires_in}
+			@@memory[key] = {value: block.yield, timestamp: Time.now, expires_in: expires_in}
 		end 
 		@@memory[key].fetch(:value, nil)
 	end
