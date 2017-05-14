@@ -11,6 +11,10 @@ get '/' do
 	WeatherController.weather
 end
 
+get '/test/:string' do
+	return params[:string]
+end
+
 get '/weather/:num' do
 	number_to_return = params['num'] || 3
 	WeatherController.weather(number_to_return)

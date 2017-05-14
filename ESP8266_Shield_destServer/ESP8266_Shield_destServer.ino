@@ -23,6 +23,14 @@ Distributed as-is; no warranty is given.
 // using it).
 #include <SoftwareSerial.h> 
 #include <SparkFunESP8266WiFi.h>
+//#include <string>
+
+// include the library code:
+#include <LiquidCrystal.h>
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+int ledPin = 13;
 
 //////////////////////////////
 // WiFi Network Definitions //
@@ -44,11 +52,11 @@ ESP8266Server server = ESP8266Server(80);
 // HTTP Strings //
 //////////////////
 // const String output = ("Press any key to begin. \t'{0}'", destServer)
-const char destServer[] = "bd4385fa.ngrok.io";
+const char destServer[] = "iot-endpoint-arduino.appspot.com";
 
 
 const String httpRequest = "GET / HTTP/1.1\r\n"
-                           "Host:bd4385fa.ngrok.io\r\n"
+                           "Host:iot-endpoint-arduino.appspot.com\r\n"
                            "Connection: close\r\n\r\n";
 
 // All functions called from setup() are defined below the
@@ -59,7 +67,9 @@ void setup()
   // Serial Monitor is used to control the demo and view
   // debug information.
   Serial.begin(9600);
-
+  pinMode(ledPin, OUTPUT);
+  // set up the LCD's number of columns and rows:
+  lcd.begin(16, 2);
   // initializeESP8266() verifies communication with the WiFi
   // shield, and sets it up.
   initializeESP8266();
@@ -70,10 +80,6 @@ void setup()
   serialTrigger(F("Press any key to begin!"));
   clientDemo();
 
-}
-
-void loop() 
-{
 }
 
 void initializeESP8266()
@@ -163,7 +169,6 @@ void clientDemo()
   // To use the ESP8266 as a TCP client, use the 
   // ESP8266Client class. First, create an object:
   ESP8266Client client;
-
   // ESP8266Client connect([server], [port]) is used to 
   // connect to a server (const char * or IPAddress) on
   // a specified port.
@@ -175,7 +180,8 @@ void clientDemo()
     Serial.println(F("Failed to connect to server."));
     return;
   }
-
+  
+  // Print a message to the LCD.
   // print and write can be used to send data to a connected
   // client connection.
   client.print(httpRequest);
@@ -183,88 +189,14 @@ void clientDemo()
   // available() will return the number of characters
   // currently in the receive buffer.
   while (client.available())
-    Serial.write(client.read()); // read() gets the FIFO char
-  
+//    Serial.write(client.read()); // read() gets the FIFO char
+    Serial.println(client.read());
+//    lcd.print(client.read());
   // connected() is a boolean return value - 1 if the 
   // connection is active, 0 if it's closed.
   if (client.connected())
     client.stop(); // stop() closes a TCP connection.
 }
-//
-//void serverSetup()
-//{
-//  // begin initializes a ESP8266Server object. It will
-//  // start a server on the port specified in the object's
-//  // constructor (in global area)
-//  server.begin();
-//  Serial.print(F("Server started! Go to "));
-//  Serial.println(esp8266.localIP());
-//  Serial.println();
-//}
-//
-//void serverDemo()
-//{
-//  // available() is an ESP8266Server function which will
-//  // return an ESP8266Client object for printing and reading.
-//  // available() has one parameter -- a timeout value. This
-//  // is the number of milliseconds the function waits,
-//  // checking for a connection.
-//  ESP8266Client client = server.available(500);
-//  
-//  if (client) 
-//  {
-//    Serial.println(F("Client Connected!"));
-//    // an http request ends with a blank line
-//    boolean currentLineIsBlank = true;
-//    while (client.connected()) 
-//    {
-//      if (client.available()) 
-//      {
-//        char c = client.read();
-//        // if you've gotten to the end of the line (received a newline
-//        // character) and the line is blank, the http request has ended,
-//        // so you can send a reply
-//        if (c == '\n' && currentLineIsBlank) 
-//        {
-//          Serial.println(F("Sending HTML page"));
-//          // send a standard http response header:
-//          client.print(htmlHeader);
-//          String htmlBody;
-//          // output the value of each analog input pin
-//          for (int a = 0; a < 6; a++)
-//          {
-//            htmlBody += "A";
-//            htmlBody += String(a);
-//            htmlBody += ": ";
-//            htmlBody += String(analogRead(a));
-//            htmlBody += "<br>\n";
-//          }
-//          htmlBody += "</html>\n";
-//          client.print(htmlBody);
-//          break;
-//        }
-//        if (c == '\n') 
-//        {
-//          // you're starting a new line
-//          currentLineIsBlank = true;
-//        }
-//        else if (c != '\r') 
-//        {
-//          // you've gotten a character on the current line
-//          currentLineIsBlank = false;
-//        }
-//      }
-//    }
-//    // give the web browser time to receive the data
-//    delay(1);
-//   
-//    // close the connection:
-//    client.stop();
-//    Serial.println(F("Client disconnected"));
-//  }
-//  
-//}
-
 // errorLoop prints an error code, then loops forever.
 void errorLoop(int error)
 {
